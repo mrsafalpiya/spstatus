@@ -16,19 +16,23 @@ static int screen;
 
 /* Function declarations */
 void cur_time(char *str);
-void cleanup(int num);
+void clean_exit(int num);
 
 /* Function implementations */
 void
 cur_time(char *str)
 {
 	time_t timer;
-	struct tm *t;
+	struct tm *t = NULL;
 	char meridiem[3];
 	int hour, minute, second;
 
 	timer = time(NULL);
 	t = localtime(&timer);
+	if (!t) {
+		fprintf(stderr, "Cannot get current time\n");
+		clean_exit(1);
+	}
 
 	if (t->tm_hour < 13) {
 		hour = t->tm_hour;
@@ -48,12 +52,15 @@ cur_time(char *str)
 }
 
 void
-cleanup(int num)
+clean_exit(int num)
 {
-	(void)num;
-
 	/* X11 clean */
-	XCloseDisplay(dpy);
+	if (XCloseDisplay(dpy) < 0) {
+		fprintf(stderr, "XCloseDisplay: Failed to close display\n");
+	}
+
+	if (num == 1)
+		exit(1);
 	exit(EXIT_SUCCESS);
 }
 
@@ -82,14 +89,17 @@ main(int argc, char **argv)
 	root = RootWindow(dpy, screen);
 
 	/* Signal handling */
-	signal(SIGINT, cleanup);
-	signal(SIGTERM, cleanup);
+	signal(SIGINT, clean_exit);
+	signal(SIGTERM, clean_exit);
 
 	/* Main loop */
 	while (1) {
 		cur_time(time);
 
-		XStoreName(dpy, root, time);
+		if (XStoreName(dpy, root, time) < 0) {
+			fprintf(stderr, "XStoreName: Allocation failed\n");
+			clean_exit(1);
+		}
 		XFlush(dpy);
 
 		sleep(INTERVAL);
