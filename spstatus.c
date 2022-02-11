@@ -36,6 +36,8 @@ cur_time(char *str)
 
 	if (t->tm_hour < 13) {
 		hour = t->tm_hour;
+		if (!hour)
+			hour = 12;
 		meridiem[0] = 'A';
 		meridiem[1] = 'M';
 		meridiem[2] = '\0';
