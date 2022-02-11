@@ -30,7 +30,7 @@ return_time(char *str)
 	timer = time(NULL);
 	t = localtime(&timer);
 
-	if (t->tm_hour < 12) {
+	if (t->tm_hour < 13) {
 		hour = t->tm_hour;
 		meridiem[0] = 'A';
 		meridiem[1] = 'M';
