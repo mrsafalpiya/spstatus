@@ -24,7 +24,7 @@ cur_time(char *str)
 {
 	time_t timer;
 	struct tm *t;
-	char meridiem[2];
+	char meridiem[3];
 	int hour, minute, second;
 
 	timer = time(NULL);
@@ -34,10 +34,12 @@ cur_time(char *str)
 		hour = t->tm_hour;
 		meridiem[0] = 'A';
 		meridiem[1] = 'M';
+		meridiem[2] = '\0';
 	} else {
 		hour = t->tm_hour - 12;
 		meridiem[0] = 'P';
 		meridiem[1] = 'M';
+		meridiem[2] = '\0';
 	}
 	minute = t->tm_min;
 	second = t->tm_sec;

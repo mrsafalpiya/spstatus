@@ -1,0 +1,84 @@
+diff --git a/config.h b/config.h
+deleted file mode 100644
+index 6b67329..0000000
+--- a/config.h
++++ /dev/null
+@@ -1,2 +0,0 @@
+-/* macros */
+-#define INTERVAL 1
+diff --git a/spstatus b/spstatus
+deleted file mode 100755
+index 9b0e805..0000000
+Binary files a/spstatus and /dev/null differ
+diff --git a/spstatus.c b/spstatus.c
+index 48acac5..a3cbded 100644
+--- a/spstatus.c
++++ b/spstatus.c
+@@ -16,19 +16,23 @@ static int screen;
+ 
+ /* Function declarations */
+ void cur_time(char *str);
+-void cleanup(int num);
++void clean_exit(int num);
+ 
+ /* Function implementations */
+ void
+ cur_time(char *str)
+ {
+ 	time_t timer;
+-	struct tm *t;
++	struct tm *t = NULL;
+ 	char meridiem[3];
+ 	int hour, minute, second;
+ 
+ 	timer = time(NULL);
+ 	t = localtime(&timer);
++	if (!t) {
++		fprintf(stderr, "Cannot get current time\n");
++		clean_exit();
++	}
+ 
+ 	if (t->tm_hour < 13) {
+ 		hour = t->tm_hour;
+@@ -48,7 +52,7 @@ cur_time(char *str)
+ }
+ 
+ void
+-cleanup(int num)
++clean_exit(int num)
+ {
+ 	(void)num;
+ 
+@@ -75,21 +79,24 @@ main(int argc, char **argv)
+ 	/* X11 init */
+ 	dpy = XOpenDisplay(display_name);
+ 	if (!dpy) {
+-		fprintf(stderr, "Cannot open connection to display");
++		fprintf(stderr, "Cannot open connection to display\n");
+ 		exit(1);
+ 	}
+ 	screen = XDefaultScreen(dpy);
+ 	root = RootWindow(dpy, screen);
+ 
+ 	/* Signal handling */
+-	signal(SIGINT, cleanup);
+-	signal(SIGTERM, cleanup);
++	signal(SIGINT, clean_exit);
++	signal(SIGTERM, clean_exit);
+ 
+ 	/* Main loop */
+ 	while (1) {
+ 		cur_time(time);
+ 
+-		XStoreName(dpy, root, time);
++		if (XStoreName(dpy, root, time) < 0) {
++			fprintf(stderr, "XStoreName: Allocation failed\n");
++			clean_exit();
++		}
+ 		XFlush(dpy);
+ 
+ 		sleep(INTERVAL);
+diff --git a/spstatus.o b/spstatus.o
+deleted file mode 100644
+index b13888d..0000000
+Binary files a/spstatus.o and /dev/null differ
