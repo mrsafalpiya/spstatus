@@ -15,12 +15,12 @@ static int screen;
 #include "config.h"
 
 /* Function declarations */
-void return_time(char *str);
+void cur_time(char *str);
 void cleanup(int num);
 
 /* Function implementations */
 void
-return_time(char *str)
+cur_time(char *str)
 {
 	time_t timer;
 	struct tm *t;
@@ -85,7 +85,7 @@ main(int argc, char **argv)
 
 	/* Main loop */
 	while (1) {
-		return_time(time);
+		cur_time(time);
 
 		XStoreName(dpy, root, time);
 		XFlush(dpy);
