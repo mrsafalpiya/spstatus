@@ -1,0 +1,6 @@
+config.h
+*.o
+spstatus
+/*.diff
+/*.orig
+/*.rej
