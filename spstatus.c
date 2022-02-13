@@ -50,7 +50,10 @@ cur_time(char *str)
 	minute = t->tm_min;
 	second = t->tm_sec;
 
-	sprintf(str, "%.2d:%.2d:%.2d%s", hour, minute, second, meridiem);
+	if (TIME_SHOW_SECONDS)
+		sprintf(str, "%.2d:%.2d:%.2d%s", hour, minute, second, meridiem);
+	else
+		sprintf(str, "%.2d:%.2d%s", hour, minute, meridiem);
 }
 
 void

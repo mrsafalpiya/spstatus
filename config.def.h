@@ -1,2 +1,5 @@
 /* macros */
-#define INTERVAL 1
+#define INTERVAL 60
+
+/* time configuration */
+#define TIME_SHOW_SECONDS 0
